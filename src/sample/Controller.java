@@ -26,6 +26,12 @@ public class Controller implements Initializable
     // функция для движения пришельцев
     void moveInvaders()
     {
+        // если текущий тик не делится на invaderMoveTick без остатка то пропускаем
+            if (currentTick % invaderMoveTick != 0)
+            {
+                return;
+            }
+
         double minX = invaders.get(0).getTranslateX();
         double maxX = invaders.get(0).getTranslateX() + invaders.get(0).getWidth();
 
@@ -44,25 +50,11 @@ public class Controller implements Initializable
             }
         }
 
-        // смена направления
-        if (maxX >= mainPane.getWidth())
-        {
-            invadersDirection = -1;
-        }
-        else if (minX <= 0)
-        {
-            invadersDirection = 1;
-        }
-
-        // двигаем
-        for(Invader z : invaders)
-        {
-            z.setTranslateX(z.getTranslateX() + invadersDirection * 10);
-        }
-
+        // флаг нужно ли идти вниз
         boolean moveDown = false;
         if (maxX >= mainPane.getWidth())
         {
+            // если края достигли то да
             moveDown = true;
             invadersDirection = 1;
         }
@@ -123,22 +115,11 @@ public class Controller implements Initializable
                }
         ));
 
-        int getInvadersDirection = 1;
-        void moveInvaders()
-        {
-            if (currentTick % invaderMoveTick != 0)
-            {
-                return;
-            }
-        }
-
         // бесконечные клики
         timeline.setCycleCount(Timeline.INDEFINITE);
 
         // запуск
         timeline.play();
-
-
     }
 
 
