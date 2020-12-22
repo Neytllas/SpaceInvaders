@@ -43,7 +43,7 @@ public class Controller implements Initializable
                 maxX = z.getTranslateX() + z.getWidth();
             }
         }
-        
+
         // смена направления
         if (maxX >= mainPane.getWidth())
         {
@@ -57,9 +57,29 @@ public class Controller implements Initializable
         // двигаем
         for(Invader z : invaders)
         {
-            z.setTranslateX(z.getTranslateX() + 10);
+            z.setTranslateX(z.getTranslateX() + invadersDirection * 10);
+        }
+
+        boolean moveDown = false;
+        if (maxX >= mainPane.getWidth())
+        {
+            moveDown = true;
+            invadersDirection = 1;
+        }
+
+        for(Invader z : invaders)
+        {
+            z.setTranslateX(z.getTranslateX() + 10 * invadersDirection);
+            if (moveDown)
+            {
+                z.setTranslateY(z.getTranslateY() + 10);
+            }
         }
     }
+
+    int currentTick = 0; // текущий тик
+    int ticketSpeed = 40; // скорость счетчика
+    int invaderMoveTick = 500 / ticketSpeed; // скорость движения пришельцев, 500 / 40 = 12
 
     @Override
     public void initialize(URL location, ResourceBundle resource)
@@ -90,21 +110,36 @@ public class Controller implements Initializable
         Timeline timeline = new Timeline(new KeyFrame(
 
               // как часто вызывать при скорости 25 кадров в сек
-              Duration.millis(40),
+              Duration.millis(ticketSpeed),
                new EventHandler<ActionEvent>()
                {
                    @Override
                    public void handle(ActionEvent event)
                    {
+                       // фиксируем каждый тик
+                       currentTick += 1;
                        moveInvaders();
                    }
                }
         ));
+
+        int getInvadersDirection = 1;
+        void moveInvaders()
+        {
+            if (currentTick % invaderMoveTick != 0)
+            {
+                return;
+            }
+        }
 
         // бесконечные клики
         timeline.setCycleCount(Timeline.INDEFINITE);
 
         // запуск
         timeline.play();
+
+
     }
+
+
 }
