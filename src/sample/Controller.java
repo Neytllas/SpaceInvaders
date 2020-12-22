@@ -6,15 +6,22 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable
 {
+
+    // множество под нажатые клавиши
+    // если клавиша нажата то в множестве будет присутствовать ее иднетификатор
+    HashSet<KeyCode> activeKeys = new HashSet<>();
+
     @FXML
     Pane mainPane;
 
@@ -75,13 +82,45 @@ public class Controller implements Initializable
         }
     }
 
+    // функция для игрока
+
+    void playerControl()
+    {
+        //обработка нажатых клавиш
+        if (activeKeys.contains(KeyCode.RIGHT))
+        {
+            player.setTranslateX(player.getTranslateX() + 10);
+        }
+        if (activeKeys.contains(KeyCode.LEFT))
+        {
+            player.setTranslateX(player.getTranslateX() - 10);
+        }
+    }
+
+
     int currentTick = 0; // текущий тик
     int ticketSpeed = 40; // скорость счетчика
     int invaderMoveTick = 500 / ticketSpeed; // скорость движения пришельцев, 500 / 40 = 12
 
+    Player player; // поле игрока
+
     @Override
     public void initialize(URL location, ResourceBundle resource)
     {
+
+        // слушаем когда к нашей панели привяжется объекты сцены
+        mainPane.sceneProperty().addListener((observable, oldValue, newValue) ->
+        {
+            // к панели уже привязан объект активного окна, находится в переменной newValue
+
+            // подключаем реакцию на нажатие клавиши
+            newValue.setOnKeyPressed(event -> activeKeys.add(event.getCode()));
+            // и подключаем реакцию на отпускание клавиши
+            newValue.setOnKeyReleased(event -> activeKeys.remove(event.getCode()));
+        });
+
+        // всякое для пришельцев
+
         // отступ
         int padding = 10;
 
@@ -104,12 +143,23 @@ public class Controller implements Initializable
             }
         }
 
+        // всякое для игрока
+
+        player = new Player();
+
+        // добавляем на форму
+        mainPane.getChildren().add(player);
+        //ставим вниз экрана
+        player.setTranslateX(10);
+        player.setTranslateY(mainPane.getPrefHeight() - 20 - player.getPrefHeight());
+
+
         // таймер
         Timeline timeline = new Timeline(new KeyFrame(
 
               // как часто вызывать при скорости 25 кадров в сек
               Duration.millis(ticketSpeed),
-               new EventHandler<ActionEvent>()
+                new EventHandler<ActionEvent>()
                {
                    @Override
                    public void handle(ActionEvent event)
@@ -117,6 +167,8 @@ public class Controller implements Initializable
                        // фиксируем каждый тик
                        currentTick += 1;
                        moveInvaders();
+                       // вызываем playerControl
+                       playerControl();
                    }
                }
         ));
