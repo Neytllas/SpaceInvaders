@@ -214,7 +214,7 @@ public class Controller implements Initializable
 
                 // расставляем на форму
                 invader.setTranslateX(j * (invader.getPrefWidth() + padding));
-                invader.setTranslateY(i * (invader.getPrefHeight() + 2*padding));
+                invader.setTranslateY(i * (invader.getPrefHeight() + padding));
             }
         }
 
