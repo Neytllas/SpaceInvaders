@@ -56,6 +56,12 @@ public class Controller implements Initializable
         {
             // если края достигли то да
             moveDown = true;
+            invadersDirection = - 1;
+        }
+        // меняем направление
+        else if (minX <= 0)
+        {
+            moveDown = true;
             invadersDirection = 1;
         }
 
