@@ -6,6 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
@@ -13,6 +14,7 @@ import javafx.util.Duration;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable
@@ -25,9 +27,13 @@ public class Controller implements Initializable
     @FXML
     Pane mainPane;
 
+    ArrayList<Bullet> bullets = new ArrayList<>();
+
     ArrayList<Invader> invaders = new ArrayList<>();
 
-    // поле для направления
+    Random random = new Random();
+
+    // поле для направления пришельцев
     int invadersDirection = 1;
 
     // функция для движения пришельцев
@@ -94,6 +100,75 @@ public class Controller implements Initializable
         if (activeKeys.contains(KeyCode.LEFT))
         {
             player.setTranslateX(player.getTranslateX() - 10);
+        }
+        if (activeKeys.contains(KeyCode.SPACE))
+        {
+            // в игре может существовать максимум одна пуля,
+            // поэтому будем проверять что есть ровно одна пуля игрока,
+            // и если она уже есть, то не будем генерить новые
+            if (bullets.stream().filter(bullet -> bullet instanceof PlayerBullet).count() == 0)
+            {
+                // создаем пулю
+                PlayerBullet playerBullet = new PlayerBullet();
+                // над игроком
+                playerBullet.setTranslateX(player.getTranslateX() + playerBullet.getPrefWidth() / 2);
+                playerBullet.setTranslateY(player.getTranslateY() - 30);
+                // добавляем в список пуль
+                bullets.add(playerBullet);
+                // добавили на форму
+                mainPane.getChildren().add(playerBullet);
+            }
+        }
+    }
+
+    // метод для пуль
+    void bulletsControl()
+    {
+        for (Bullet bullet : bullets)
+        {
+            bullet.setTranslateY(bullet.getTranslateY() + bullet.direction * 15);
+        }
+
+        ArrayList<Node> nodesToRemove = new ArrayList<>();
+        for (Bullet bullet : bullets)
+        {
+            for (Node node : mainPane.getChildren())
+            {
+                if (node instanceof Invader && bullet instanceof PlayerBullet)
+                {
+                    Invader invader = (Invader) node;
+                    if (invader.isOverlap(bullet))
+                    {
+                        nodesToRemove.add(invader);
+                        nodesToRemove.add(bullet);
+                        break;
+                    }
+                }
+            }
+        }
+        bullets.removeAll(nodesToRemove);
+        invaders.removeAll(nodesToRemove);
+        mainPane.getChildren().removeAll(nodesToRemove);
+    }
+
+    // пули инопришеленцев
+    void invadersControl ()
+    {
+        if (currentTick % invaderMoveTick !=0)
+        {
+            return;
+        }
+
+        for (Invader z : invaders)
+        {
+            if (random.nextDouble() < 0.01)
+            {
+                InvaderBullet bullet = new InvaderBullet();
+                bullet.setTranslateX(z.getTranslateX() + bullet.getPrefWidth() / 2);
+                bullet.setTranslateY(z.getTranslateY() + 30);
+                bullets.add(bullet);
+                mainPane.getChildren().add(bullet);
+            }
         }
     }
 
@@ -169,6 +244,10 @@ public class Controller implements Initializable
                        moveInvaders();
                        // вызываем playerControl
                        playerControl();
+                       // вызываем bulletsControl
+                       bulletsControl();
+                       // вызываем invadersControl
+                       invadersControl();
                    }
                }
         ));
