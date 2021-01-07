@@ -15,7 +15,7 @@ public class Player extends Actor
             return life;
         }
 
-        public void setLife(int Life)
+        public void setLife(int life)
         {
             this.life = life;
         }

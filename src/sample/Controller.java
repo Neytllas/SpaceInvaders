@@ -8,11 +8,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
-import java.awt.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -124,7 +124,7 @@ public class Controller implements Initializable
                 mainPane.getChildren().add(playerBullet);
             }
         }
-        lblLife.setText("Запас жизней:" + String.valueOf(player.life));
+        lblLife.setText("Запас жизней : " + String.valueOf(player.life));
     }
 
     // метод для пуль
@@ -146,6 +146,16 @@ public class Controller implements Initializable
                     if (invader.isOverlap(bullet))
                     {
                         nodesToRemove.add(invader);
+                        nodesToRemove.add(bullet);
+                        break;
+                    }
+                }
+                if (node instanceof Player && bullet instanceof InvaderBullet)
+                {
+                    Player invader = (Player) node;
+                    if (player.isOverlap(bullet))
+                    {
+                        player.setLife(player.getLife() -1);
                         nodesToRemove.add(bullet);
                         break;
                     }
