@@ -156,11 +156,14 @@ public class Controller implements Initializable
                 {
                     Invader invader = (Invader) node;
                     if (invader.isOverlap(bullet))
-                    { *
+                    {
                         nodesToRemove.add(invader);
                         nodesToRemove.add(bullet);
+                        score ++;
+                        lblScore.setText("Очки : " + String.valueOf(this.score));
                         break;
                     }
+
                 }
 
                 // при попадании пули в игрока уменьшаем жизни, если кол-во жизне = 0, перезапускаем
@@ -180,6 +183,13 @@ public class Controller implements Initializable
                     }
 
                 }
+            }
+
+            // если все пришельцы убиты то перезапуск
+            if (invaders.size() == 0)
+            {
+                ResetGame();
+                return;
             }
         }
         bullets.removeAll(nodesToRemove);
@@ -275,6 +285,9 @@ public class Controller implements Initializable
         mainPane.getChildren().removeAll(nodesToRemove);
         bullets.removeAll(nodesToRemove);
         invaders.removeAll(nodesToRemove);
+        this.score = 0;
+        lblScore.setText("Очки : " + String.valueOf(this.score));
+
         // всякое для пришельцев
 
         // отступ
