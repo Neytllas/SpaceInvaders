@@ -7,5 +7,7 @@ public class Bullet extends Actor
     {
         super(10,10);
         this.direction = direction;
+
+        setStyle("-fx-border-color:white; -fx-background-color: white;");
     }
 }

@@ -35,4 +35,6 @@ public class Actor extends Label
                 || rightB > leftA && rightB < rightA && bottomB > topA && bottomB < bottomA
                 || rightB > leftA && rightB < rightA && topB > topA && topB < bottomA;
     }
+
+
 }

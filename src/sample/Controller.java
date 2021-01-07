@@ -7,10 +7,12 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
+import java.awt.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -26,6 +28,9 @@ public class Controller implements Initializable
 
     @FXML
     Pane mainPane;
+
+    @FXML
+    Label lblLife;
 
     ArrayList<Bullet> bullets = new ArrayList<>();
 
@@ -119,6 +124,7 @@ public class Controller implements Initializable
                 mainPane.getChildren().add(playerBullet);
             }
         }
+        lblLife.setText("Запас жизней:" + String.valueOf(player.life));
     }
 
     // метод для пуль
@@ -171,7 +177,6 @@ public class Controller implements Initializable
             }
         }
     }
-
 
     int currentTick = 0; // текущий тик
     int ticketSpeed = 40; // скорость счетчика
