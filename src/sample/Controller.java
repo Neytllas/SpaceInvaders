@@ -32,6 +32,9 @@ public class Controller implements Initializable
     @FXML
     Label lblLife;
 
+    @FXML
+    Label lblScore;
+
     ArrayList<Bullet> bullets = new ArrayList<>();
 
     ArrayList<Invader> invaders = new ArrayList<>();
@@ -40,6 +43,9 @@ public class Controller implements Initializable
 
     // поле для направления пришельцев
     int invadersDirection = 1;
+
+    // поле для вывода очков
+    int score = 0;
 
     // функция для движения пришельцев
     void moveInvaders()
@@ -138,27 +144,41 @@ public class Controller implements Initializable
         ArrayList<Node> nodesToRemove = new ArrayList<>();
         for (Bullet bullet : bullets)
         {
+            if (bullet.getTranslateY() < 0 || bullet.getTranslateY() > mainPane.getHeight())
+            {
+                nodesToRemove.add(bullet);
+                continue;
+            }
+
             for (Node node : mainPane.getChildren())
             {
                 if (node instanceof Invader && bullet instanceof PlayerBullet)
                 {
                     Invader invader = (Invader) node;
                     if (invader.isOverlap(bullet))
-                    {
+                    { *
                         nodesToRemove.add(invader);
                         nodesToRemove.add(bullet);
                         break;
                     }
                 }
+
+                // при попадании пули в игрока уменьшаем жизни, если кол-во жизне = 0, перезапускаем
                 if (node instanceof Player && bullet instanceof InvaderBullet)
                 {
                     Player invader = (Player) node;
                     if (player.isOverlap(bullet))
                     {
                         player.setLife(player.getLife() -1);
+                        if (player.life == 0)
+                        {
+                            ResetGame();
+                            return;
+                        }
                         nodesToRemove.add(bullet);
                         break;
                     }
+
                 }
             }
         }
@@ -209,6 +229,52 @@ public class Controller implements Initializable
             newValue.setOnKeyReleased(event -> activeKeys.remove(event.getCode()));
         });
 
+        // таймер
+        Timeline timeline = new Timeline(new KeyFrame(
+
+              // как часто вызывать при скорости 25 кадров в сек
+              Duration.millis(ticketSpeed),
+                new EventHandler<ActionEvent>()
+               {
+                   @Override
+                   public void handle(ActionEvent event)
+                   {
+                       // фиксируем каждый тик
+                       currentTick += 1;
+                       moveInvaders();
+                       // вызываем playerControl
+                       playerControl();
+                       // вызываем bulletsControl
+                       bulletsControl();
+                       // вызываем invadersControl
+                       invadersControl();
+                   }
+               }
+        ));
+
+        // бесконечные клики
+        timeline.setCycleCount(Timeline.INDEFINITE);
+
+        // запуск
+        timeline.play();
+
+        ResetGame();
+    }
+
+    // метод для перезапуска игры при потере всех жизней гг
+    public void ResetGame()
+    {
+        ArrayList<Node> nodesToRemove = new ArrayList<>();
+        for(Node c : mainPane.getChildren())
+        {
+            if (c instanceof Actor)
+            {
+                nodesToRemove.add(c);
+            }
+        }
+        mainPane.getChildren().removeAll(nodesToRemove);
+        bullets.removeAll(nodesToRemove);
+        invaders.removeAll(nodesToRemove);
         // всякое для пришельцев
 
         // отступ
@@ -242,36 +308,6 @@ public class Controller implements Initializable
         //ставим вниз экрана
         player.setTranslateX(10);
         player.setTranslateY(mainPane.getPrefHeight() - 20 - player.getPrefHeight());
-
-
-        // таймер
-        Timeline timeline = new Timeline(new KeyFrame(
-
-              // как часто вызывать при скорости 25 кадров в сек
-              Duration.millis(ticketSpeed),
-                new EventHandler<ActionEvent>()
-               {
-                   @Override
-                   public void handle(ActionEvent event)
-                   {
-                       // фиксируем каждый тик
-                       currentTick += 1;
-                       moveInvaders();
-                       // вызываем playerControl
-                       playerControl();
-                       // вызываем bulletsControl
-                       bulletsControl();
-                       // вызываем invadersControl
-                       invadersControl();
-                   }
-               }
-        ));
-
-        // бесконечные клики
-        timeline.setCycleCount(Timeline.INDEFINITE);
-
-        // запуск
-        timeline.play();
     }
 
 

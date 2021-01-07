@@ -10,6 +10,7 @@ public class Player extends Actor
         setStyle("-fx-border-color:green; -fx-background-color: green;");
     }
 
+    // количество жизней
         public int getLife()
         {
             return life;
