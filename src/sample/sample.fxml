@@ -3,10 +3,9 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.Pane?>
 
-
 <Pane fx:id="mainPane" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: black;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
    <children>
-      <Label fx:id="lblLife" layoutX="219.0" layoutY="527.0" style="-fx-background-color: white;" text="Label" />
-      <Label fx:id="lblScore" layoutX="461.0" layoutY="527.0" style="-fx-background-color: white;" text="Очки :" />
+      <Label fx:id="lblLife" layoutX="217.0" layoutY="565.0" style="-fx-background-color: white;" text="Label" />
+      <Label fx:id="lblScore" layoutX="462.0" layoutY="565.0" style="-fx-background-color: white;" text="Очки :" />
    </children>
 </Pane>

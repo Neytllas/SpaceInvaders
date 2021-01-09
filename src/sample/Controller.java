@@ -50,6 +50,12 @@ public class Controller implements Initializable
     // функция для движения пришельцев
     void moveInvaders()
     {
+        // проверяем количество invaders и если их ноль просто выходим из функции
+        if (invaders.size() == 0)
+        {
+            return;
+        }
+
         // если текущий тик не делится на invaderMoveTick без остатка то пропускаем
             if (currentTick % invaderMoveTick != 0)
             {
@@ -112,6 +118,15 @@ public class Controller implements Initializable
         {
             player.setTranslateX(player.getTranslateX() - 10);
         }
+        if (player.getTranslateX() < 20)
+        {
+            player.setTranslateX(20);
+        }
+        if (player.getTranslateX() > (mainPane.getWidth() - player.getWidth()))
+        {
+            player.setTranslateX(mainPane.getWidth() - player.getWidth());
+        }
+
         if (activeKeys.contains(KeyCode.SPACE))
         {
             // в игре может существовать максимум одна пуля,
@@ -320,7 +335,7 @@ public class Controller implements Initializable
         mainPane.getChildren().add(player);
         //ставим вниз экрана
         player.setTranslateX(10);
-        player.setTranslateY(mainPane.getPrefHeight() - 20 - player.getPrefHeight());
+        player.setTranslateY(mainPane.getPrefHeight() - 50 - player.getPrefHeight());
     }
 
 
