@@ -2,18 +2,25 @@ package sample;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
@@ -21,6 +28,8 @@ import java.util.ResourceBundle;
 
 public class Controller implements Initializable
 {
+    // поле для контроля состояния игры
+    String gameState = "menu";
 
     // множество под нажатые клавиши
     // если клавиша нажата то в множестве будет присутствовать ее иднетификатор
@@ -34,6 +43,12 @@ public class Controller implements Initializable
 
     @FXML
     Label lblScore;
+
+    @FXML
+    Pane menuPane;
+
+    @FXML
+    Label lblMenuTitle;
 
     ArrayList<Bullet> bullets = new ArrayList<>();
 
@@ -190,7 +205,7 @@ public class Controller implements Initializable
                         player.setLife(player.getLife() -1);
                         if (player.life == 0)
                         {
-                            ResetGame();
+                            onLose();
                             return;
                         }
                         nodesToRemove.add(bullet);
@@ -199,14 +214,14 @@ public class Controller implements Initializable
 
                 }
             }
+        }
 
-            // если все пришельцы убиты то перезапуск
-            if (invaders.size() == 0)
+        // если все пришельцы убиты то перезапуск
+        if (invaders.size() == 0)
             {
-                ResetGame();
+                onWin();
                 return;
             }
-        }
         bullets.removeAll(nodesToRemove);
         invaders.removeAll(nodesToRemove);
         mainPane.getChildren().removeAll(nodesToRemove);
@@ -264,15 +279,18 @@ public class Controller implements Initializable
                    @Override
                    public void handle(ActionEvent event)
                    {
-                       // фиксируем каждый тик
-                       currentTick += 1;
-                       moveInvaders();
-                       // вызываем playerControl
-                       playerControl();
-                       // вызываем bulletsControl
-                       bulletsControl();
-                       // вызываем invadersControl
-                       invadersControl();
+                       if (gameState == "game")
+                       {
+                           // фиксируем каждый тик
+                           currentTick += 1;
+                           moveInvaders();
+                           // вызываем playerControl
+                           playerControl();
+                           // вызываем bulletsControl
+                           bulletsControl();
+                           // вызываем invadersControl
+                           invadersControl();
+                       }
                    }
                }
         ));
@@ -283,7 +301,62 @@ public class Controller implements Initializable
         // запуск
         timeline.play();
 
-        ResetGame();
+    }
+
+    // функция для отчистки поля
+    void killAll()
+    {
+        ArrayList<Node> nodesToRemove = new ArrayList<>();
+        for (Node c : mainPane.getChildren())
+        {
+            if (c instanceof Actor)
+            {
+                nodesToRemove.add(c);
+            }
+        }
+        mainPane.getChildren().removeAll(nodesToRemove);
+        bullets.removeAll(nodesToRemove);
+        invaders.removeAll(nodesToRemove);
+    }
+
+    // реакция на выигрыш
+    void onWin()
+    {
+        killAll(); // чистим поле
+
+        this.lblMenuTitle.setText("ВЫ ВЫИГРАЛИ!!!");
+        this.menuPane.setVisible(true);
+        this.gameState = "menu";
+
+        saveRecords("Победа");
+    }
+
+    // реакция на поражение
+    void onLose ()
+    {
+        killAll(); // чистим поле
+
+        this.lblMenuTitle.setText("ВЫ ПРОИГРАЛИ =(");
+        this.menuPane.setVisible(true);
+        this.gameState = "menu";
+
+        saveRecords("Поражение");
+    }
+
+    void saveRecords (String status)
+    {
+        FileOutputStream fos = new FileOutputStream("records.txt", true);
+        fos.write(String.format(
+                "%s | %s | результат: %s\n",
+                java.time.LocalDateTime.now(),
+                status,
+                score
+        ).getBytes());
+        fos.close();
+    }
+    catch (IOException e)
+    {
+        e.printStackTrace();
     }
 
     // метод для перезапуска игры при потере всех жизней гг
@@ -339,4 +412,35 @@ public class Controller implements Initializable
     }
 
 
+    public void onPlay(ActionEvent actionEvent)
+    {
+        ResetGame(); // сбрасываем игру
+        this.menuPane.setVisible(false); // прячем меню
+        this.gameState = "game"; // меняем состояние чтобы таймер перестал работать в холостую
+    }
+
+    public void onRecord(ActionEvent actionEvent)
+    {
+        try {
+            // читаем содержимое файла
+            String content = new String(Files.readAllBytes(Paths.get("records.txt")));
+            // создаем всплывающее окно с текстом
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            // устанавливаем заголовок окна
+            alert.setTitle("РЕКОРДЫ");
+            // убираем текст заголовка
+            alert.setHeaderText(null);
+            // загоняем содержимое файла с рекордами
+            alert.setContentText(content);
+            // показываем окно
+            alert.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void onExit(ActionEvent actionEvent)
+    {
+        Platform.exit();
+    }
 }
