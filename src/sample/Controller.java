@@ -345,18 +345,21 @@ public class Controller implements Initializable
 
     void saveRecords (String status)
     {
-        FileOutputStream fos = new FileOutputStream("records.txt", true);
-        fos.write(String.format(
-                "%s | %s | результат: %s\n",
-                java.time.LocalDateTime.now(),
-                status,
-                score
-        ).getBytes());
-        fos.close();
-    }
-    catch (IOException e)
-    {
-        e.printStackTrace();
+        try
+        {
+            FileOutputStream fos = new FileOutputStream("records.txt", true);
+            fos.write(String.format(
+                    "%s | %s | результат: %s\n",
+                    java.time.LocalDateTime.now(),
+                    status,
+                    score
+            ).getBytes());
+            fos.close();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     // метод для перезапуска игры при потере всех жизней гг
