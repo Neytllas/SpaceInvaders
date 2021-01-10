@@ -7,7 +7,7 @@
 
 <Pane fx:id="mainPane" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: black;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
    <children>
-      <Label fx:id="lblLife" layoutX="217.0" layoutY="565.0" style="-fx-background-color: white;" text="Label" />
+      <Label fx:id="lblLife" layoutX="217.0" layoutY="565.0" style="-fx-background-color: white;" text="Жизни" />
       <Label fx:id="lblScore" layoutX="462.0" layoutY="565.0" style="-fx-background-color: white;" text="Очки :" />
       <Pane fx:id="menuPane" layoutX="238.0" layoutY="137.0" prefHeight="306.0" prefWidth="324.0" style="-fx-background-color: white;">
          <children>
@@ -16,9 +16,9 @@
                   <Font size="27.0" />
                </font>
             </Label>
-            <Button layoutX="108.0" layoutY="122.0" mnemonicParsing="false" onAction="onPlay" prefHeight="31.0" prefWidth="109.0" text="ИГРАТЬ" />
-            <Button layoutX="108.0" layoutY="174.0" mnemonicParsing="false" onAction="onPlay" prefHeight="31.0" prefWidth="109.0" text="РЕКОРДЫ" />
-            <Button layoutX="108.0" layoutY="222.0" mnemonicParsing="false" onAction="onPlay" prefHeight="31.0" prefWidth="109.0" text="ВЫЙТИ" />
+            <Button layoutX="108.0" layoutY="122.0" mnemonicParsing="false" onAction="#onPlay" prefHeight="31.0" prefWidth="109.0" text="ИГРАТЬ" />
+            <Button layoutX="108.0" layoutY="174.0" mnemonicParsing="false" onAction="#onRecord" prefHeight="31.0" prefWidth="109.0" text="РЕКОРДЫ" />
+            <Button layoutX="108.0" layoutY="222.0" mnemonicParsing="false" onAction="#onExit" prefHeight="31.0" prefWidth="109.0" text="ВЫЙТИ" />
          </children>
       </Pane>
    </children>
