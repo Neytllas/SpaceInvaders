@@ -11,7 +11,7 @@
       <Label fx:id="lblScore" layoutX="462.0" layoutY="565.0" style="-fx-background-color: white;" text="Очки :" />
       <Pane fx:id="menuPane" layoutX="238.0" layoutY="137.0" prefHeight="306.0" prefWidth="324.0" style="-fx-background-color: white;">
          <children>
-            <Label fx:id="lblMenuTitle" layoutX="119.0" layoutY="51.0" prefHeight="39.0" prefWidth="88.0" text="МЕНЮ">
+            <Label fx:id="lblMenuTitle" alignment="CENTER" layoutX="1.0" layoutY="51.0" prefHeight="39.0" prefWidth="324.0" text="МЕНЮ">
                <font>
                   <Font size="27.0" />
                </font>
